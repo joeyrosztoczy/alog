@@ -46,6 +46,7 @@ defmodule Alog do
         field(:entry_id, Ecto.UUID)
   """
 
+  @callback all() :: [Ecto.Schema.t()] | no_return()
   @callback insert(Ecto.Schema.t() | Ecto.Changeset.t()) ::
               {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
   @callback get(String.t()) :: Ecto.Schema.t() | nil | no_return()
