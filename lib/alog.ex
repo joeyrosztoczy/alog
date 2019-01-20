@@ -139,7 +139,7 @@ defmodule Alog do
 
         query = from(m in subquery(sub), where: not m.deleted, select: m)
 
-        item = @repo.one(query)
+        item = @repo.one!(query)
       end
 
       @doc """
