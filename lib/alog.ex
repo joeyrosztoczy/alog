@@ -36,11 +36,14 @@ defmodule Alog do
   If you do not explicitly set a Repo, Alog will try to find it using your application name.
   So if your app is `MyApp` and your schema is `MyApp.User`, or `MyApp.Accounts.User`, your Repo should be `MyApp.Repo`.
 
-  Any schema that uses Alog must include the fields `:deleted` of type `:boolean` and default false,
-  and `:entry_id` of type `:string`.
+  A good best practice would be to configure a repo for Alog with a custom user that has delete and update priveleges 
+  revoked, to guarantee the behavior at the database level as well.
 
+  Any schema that uses Alog must include the fields `:deleted`
+  and `:entry_id` for the get/1, all/0, updated/2 and delete/1 callbacks to function
+  for example:
         field(:deleted, :boolean, default: false)
-        field(:entry_id, :string)
+        field(:entry_id, Ecto.UUID)
   """
 
   @callback insert(Ecto.Schema.t() | Ecto.Changeset.t()) ::
@@ -68,13 +71,12 @@ defmodule Alog do
 
       @repo apply(unquote(__MODULE__), :get_repo, [__MODULE__])
 
-      if not Map.has_key?(%__MODULE__{}, :deleted) || not is_boolean(%__MODULE__{}.deleted) do
+      if not Map.has_key?(%__MODULE__{}, :deleted) do
         raise """
 
-        Your Schema must have a key :deleted, with type :boolean and default false.
+        Your Schema must have a key :deleted.
 
-        Add the following line to your schema:
-
+        For example, in your schema:
             field(:deleted, :boolean, default: false)
         """
       end
@@ -82,11 +84,11 @@ defmodule Alog do
       if not Map.has_key?(%__MODULE__{}, :entry_id) do
         raise """
 
-        Your Schema must have a key :entry_id, with type :string
+        Your Schema must have a key :entry_id.
 
-        Add the following line to your schema:
+        For example, in your schema:
 
-            field(:entry_id, :string)
+            field(:entry_id, Ecto.UUID)
         """
       end
 
